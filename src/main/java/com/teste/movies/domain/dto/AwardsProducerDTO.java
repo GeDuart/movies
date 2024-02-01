@@ -7,7 +7,7 @@ import lombok.Setter;
 @Setter
 @Getter
 @AllArgsConstructor
-public class ProducerWinDTO {
+public class AwardsProducerDTO {
 
     private String producer;
 

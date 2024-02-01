@@ -9,10 +9,10 @@ import java.util.List;
 @Getter
 @Setter
 @AllArgsConstructor
-public class ProducerWinnerDTO {
+public class AwardsWinDTO {
 
-    private List<ProducerWinDTO> min;
+    private List<AwardsProducerDTO> min;
 
-    private List<ProducerWinDTO> max;
+    private List<AwardsProducerDTO> max;
 
 }

@@ -3,11 +3,11 @@ package com.teste.movies.services;
 import com.teste.movies.domain.entity.Movies;
 import com.teste.movies.domain.entity.Producer;
 import com.teste.movies.domain.entity.Studios;
-import com.teste.movies.domain.entity.Winner;
+import com.teste.movies.domain.entity.Awards;
 import com.teste.movies.repository.MoviesRepository;
 import com.teste.movies.repository.ProducerRepository;
 import com.teste.movies.repository.StudioRepository;
-import com.teste.movies.repository.WinnerRepository;
+import com.teste.movies.repository.AwardsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -29,13 +29,13 @@ public class ImportDataServiceImpl implements ImportDataService {
     ProducerRepository producerRepository;
 
     @Autowired
-    WinnerRepository winnerRepository;
+    AwardsRepository awardsRepository;
 
     private static final int INDEX_YEAR = 0;
     private static final int INDEX_FILM_NAME = 1;
     private static final int INDEX_STUDIO = 2;
     private static final int INDEX_PRODUCER = 3;
-    private static final int INDEX_WINNER = 4;
+    private static final int INDEX_AWARDS = 4;
 
     @Override
     public void importDataH2() {
@@ -56,16 +56,16 @@ public class ImportDataServiceImpl implements ImportDataService {
 
     private void parseObject(String csvLine){
         String[] fields = csvLine.split(";");
-        boolean winner = fields.length > 4 && fields[INDEX_WINNER].equals("yes");
+        boolean awards = fields.length > 4 && fields[INDEX_AWARDS].equals("yes");
 
         Studios studiosSave = getOrCreateStudio(fields[INDEX_STUDIO]);
 
         Producer producerSave = getOrCreateProducer(fields[INDEX_PRODUCER]);
 
-        Movies movieSave = createMovie(new Movies(Integer.parseInt(fields[INDEX_YEAR]),fields[INDEX_FILM_NAME],winner, producerSave,studiosSave));
+        Movies movieSave = createMovie(new Movies(Integer.parseInt(fields[INDEX_YEAR]),fields[INDEX_FILM_NAME],awards, producerSave,studiosSave));
 
-        if (winner)
-            winnerRepository.save(new Winner(movieSave,studiosSave,producerSave,Integer.parseInt(fields[INDEX_YEAR])));
+        if (awards)
+            awardsRepository.save(new Awards(movieSave,studiosSave,producerSave,Integer.parseInt(fields[INDEX_YEAR])));
     }
 
     private Studios getOrCreateStudio(String studioName) {

@@ -20,8 +20,8 @@ public class Movies {
     @Column(name = "title")
     private String title;
 
-    @Column(name = "winner")
-    private boolean winner;
+    @Column(name = "awards")
+    private boolean awards;
 
     @ManyToOne
     private Producer producer;
@@ -29,10 +29,10 @@ public class Movies {
     @ManyToOne
     private Studios studios;
 
-    public Movies(Integer year, String title, Boolean winner, Producer producer, Studios studios) {
+    public Movies(Integer year, String title, Boolean awards, Producer producer, Studios studios) {
         this.year = year;
         this.title = title;
-        this.winner = winner;
+        this.awards = awards;
         this.producer = producer;
         this.studios = studios;
     }

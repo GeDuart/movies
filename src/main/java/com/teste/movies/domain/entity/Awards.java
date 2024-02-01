@@ -1,15 +1,11 @@
 package com.teste.movies.domain.entity;
 
-import com.teste.movies.domain.dto.WinnerDTO;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Entity
 @Data
-public class Winner {
+public class Awards {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,16 +20,16 @@ public class Winner {
     @ManyToOne
     private Producer producer;
 
-    private int yearWinner;
+    private int yearAward;
 
-    public Winner(Movies movies, Studios studios, Producer producer,int yearWinner) {
+    public Awards(Movies movies, Studios studios, Producer producer, int yearAward) {
         this.movies = movies;
         this.studios = studios;
         this.producer = producer;
-        this.yearWinner = yearWinner;
+        this.yearAward = yearAward;
     }
 
-    public Winner() {
+    public Awards() {
 
     }
 

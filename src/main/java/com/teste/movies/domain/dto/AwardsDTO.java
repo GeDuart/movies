@@ -3,7 +3,7 @@ package com.teste.movies.domain.dto;
 import com.teste.movies.domain.entity.Movies;
 import com.teste.movies.domain.entity.Producer;
 import com.teste.movies.domain.entity.Studios;
-import com.teste.movies.domain.entity.Winner;
+import com.teste.movies.domain.entity.Awards;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,23 +11,23 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class WinnerDTO {
+public class AwardsDTO {
 
     private Long id;
     private Movies movies;
     private Studios studios;
     private Producer producer;
-    private int yearWinner;
+    private int yearAwards;
     private int interval;
     private int previousWin;
     private int followingWin;
 
-    public WinnerDTO(Winner winner) {
-        this.id = winner.getId();
-        this.movies = winner.getMovies();
-        this.studios = winner.getStudios();
-        this.producer = winner.getProducer();
-        this.yearWinner = winner.getYearWinner();
+    public AwardsDTO(Awards awards) {
+        this.id = awards.getId();
+        this.movies = awards.getMovies();
+        this.studios = awards.getStudios();
+        this.producer = awards.getProducer();
+        this.yearAwards = awards.getYearAward();
     }
 }
 
