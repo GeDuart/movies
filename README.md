@@ -5,7 +5,7 @@ O projeto Movies é uma aplicação Spring Boot que importa dados de filmes a pa
 Para execução do projeto, é necessário instalação do JDK 17
 
 <h3>Executando o Projeto</h3>
-
+Para executar o projeto, nenhuma instalação externa é necessária. Ao ser iniciada, a aplicação cria o banco de dados e o popula com os dados do arquivo movielist.csv, que se encontra em src/main/resources/.
 
 
 <h3>Executando Testes de Integração</h3>
