@@ -1,5 +1,6 @@
 <h1>Movies Project</h1>
-O projeto Movies é uma aplicação Spring Boot que importa dados de filmes a partir de um arquivo CSV e os armazena em um banco de dados H2.
+O projeto Movies é uma aplicação para possibilitar a leitura da lista de indicados e vencedores
+da categoria Pior Filme do Golden Raspberry Awards.
 
 # Rodando o Projeto no IntelliJ IDEA
 
