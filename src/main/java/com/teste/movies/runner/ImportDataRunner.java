@@ -1,5 +1,6 @@
 package com.teste.movies.runner;
 
+import com.teste.movies.services.ImportDataService;
 import com.teste.movies.services.ImportDataServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -10,7 +11,7 @@ import org.springframework.stereotype.Component;
 public class ImportDataRunner implements ApplicationRunner {
 
     @Autowired
-    ImportDataServiceImpl importData;
+    ImportDataService importData;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {

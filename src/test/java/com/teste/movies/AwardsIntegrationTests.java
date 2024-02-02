@@ -4,6 +4,7 @@ import com.teste.movies.domain.dto.AwardsWinDTO;
 import com.teste.movies.domain.exception.AwardsNotFound;
 import com.teste.movies.repository.AwardsRepository;
 import com.teste.movies.services.ProducerAwardsService;
+import com.teste.movies.services.ProducerAwardsServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -24,7 +25,7 @@ class AwardsIntegrationTests {
 	@Mock
 	private AwardsRepository awardsRepository;
 	@InjectMocks
-	private ProducerAwardsService producerAwardsServiceMock;
+	private ProducerAwardsServiceImpl producerAwardsServiceMock;
 	@Test
 	void testFasterAwards() {
 

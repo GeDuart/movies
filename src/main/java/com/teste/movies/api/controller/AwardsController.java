@@ -2,6 +2,7 @@ package com.teste.movies.api.controller;
 
 import com.teste.movies.domain.dto.AwardsWinDTO;
 import com.teste.movies.services.ProducerAwardsService;
+import com.teste.movies.services.ProducerAwardsServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
