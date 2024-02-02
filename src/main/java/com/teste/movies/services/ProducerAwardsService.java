@@ -4,6 +4,7 @@ import com.teste.movies.domain.dto.AwardsProducerDTO;
 import com.teste.movies.domain.dto.AwardsWinDTO;
 import com.teste.movies.domain.dto.AwardsDTO;
 import com.teste.movies.domain.entity.Awards;
+import com.teste.movies.domain.exception.AwardsNotFound;
 import com.teste.movies.repository.AwardsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,54 +25,57 @@ public class ProducerAwardsService {
     public AwardsWinDTO getFasterAwardsAndMaxInterval(){
 
         List<Awards> awardsFaster = awardsRepository.findAwardsWithMoreThanTwoOccurrences();
+        if (!awardsFaster.isEmpty()) {
+            List<AwardsDTO> listAwardsDTO = awardsService.convertToDTOList(awardsFaster);
 
-        List<AwardsDTO> listAwardsDTO = awardsService.convertToDTOList(awardsFaster);
+            List<AwardsDTO> calculateElapsedTime =
+                    listAwardsDTO
+                            .stream()
+                            .collect(Collectors.groupingBy(
+                                    AwardsDTO::getProducer,
+                                    Collectors.collectingAndThen(
+                                            Collectors.toList(),
+                                            list -> {
+                                                list.sort(Comparator.comparingInt(AwardsDTO::getYearAwards));
+                                                int interval = 0;
+                                                for (int i = 0; i < list.size(); i++) {
+                                                    AwardsDTO current = list.get(i);
+                                                    int followingIndex = i + 1;
 
-        List<AwardsDTO> calculateElapsedTime =
-                listAwardsDTO
-                        .stream()
-                        .collect(Collectors.groupingBy(
-                                AwardsDTO::getProducer,
-                                Collectors.collectingAndThen(
-                                        Collectors.toList(),
-                                        list -> {
-                                            list.sort(Comparator.comparingInt(AwardsDTO::getYearAwards));
-                                            int interval = 0;
-                                            for (int i = 0; i < list.size(); i++) {
-                                                AwardsDTO current = list.get(i);
-                                                int followingIndex = i + 1;
+                                                    if (followingIndex < list.size()) {
+                                                        AwardsDTO next = list.get(followingIndex);
+                                                        interval = next.getYearAwards() - current.getYearAwards();
 
-                                                if (followingIndex < list.size()) {
-                                                    AwardsDTO next = list.get(followingIndex);
-                                                    interval = next.getYearAwards() - current.getYearAwards();
+                                                        current.setFollowingWin(next.getYearAwards());
+                                                        current.setInterval(interval);
+                                                    }
 
-                                                    current.setFollowingWin(next.getYearAwards());
-                                                    current.setInterval(interval);
+                                                    if (i > 0) {
+                                                        AwardsDTO previous = list.get(i - 1);
+                                                        current.setPreviousWin(previous.getYearAwards());
+                                                        current.setInterval(interval);
+                                                    }
                                                 }
-
-                                                if (i > 0) {
-                                                    AwardsDTO previous = list.get(i - 1);
-                                                    current.setPreviousWin(previous.getYearAwards());
-                                                    current.setInterval(interval);
-                                                }
+                                                return list;
                                             }
-                                            return list;
-                                        }
-                                )
-                        ))
-                        .values()
-                        .stream()
-                        .flatMap(List::stream)
-                        .sorted(Comparator.comparing(AwardsDTO::getInterval))
-                        .toList();
+                                    )
+                            ))
+                            .values()
+                            .stream()
+                            .flatMap(List::stream)
+                            .sorted(Comparator.comparing(AwardsDTO::getInterval))
+                            .toList();
 
-        List<AwardsDTO> registryMinorInterval = getMinorInterval(calculateElapsedTime);
-        List<AwardsProducerDTO> minorIntervalAwards = getIntervalAwards(registryMinorInterval);
+            List<AwardsDTO> registryMinorInterval = getMinorInterval(calculateElapsedTime);
+            List<AwardsProducerDTO> minorIntervalAwards = getIntervalAwards(registryMinorInterval);
 
-        List<AwardsDTO> registryMaxInterval = getMaxInterval(calculateElapsedTime);
-        List<AwardsProducerDTO> biggerIntervalAwards = getIntervalAwards(registryMaxInterval);
+            List<AwardsDTO> registryMaxInterval = getMaxInterval(calculateElapsedTime);
+            List<AwardsProducerDTO> biggerIntervalAwards = getIntervalAwards(registryMaxInterval);
 
-        return new AwardsWinDTO(minorIntervalAwards,biggerIntervalAwards);
+            return new AwardsWinDTO(minorIntervalAwards, biggerIntervalAwards);
+        }else {
+            throw new AwardsNotFound("No producer found");
+        }
     }
 
     private List<AwardsDTO> getMinorInterval(List<AwardsDTO> calculateElapsedTime){
@@ -108,8 +112,8 @@ public class ProducerAwardsService {
                 producerAwardsDTO = new AwardsProducerDTO(r.getProducer().getProducerName(),r.getInterval(),r.getPreviousWin(),r.getYearAwards());
             }else if ( r.getPreviousWin() == 0 && r.getFollowingWin() > 0)
                 producerAwardsDTO = new AwardsProducerDTO(r.getProducer().getProducerName(),r.getInterval(),r.getYearAwards(),r.getFollowingWin());
-
-            intervalAwards.add(producerAwardsDTO);
+            if (!intervalAwards.contains(producerAwardsDTO))
+                intervalAwards.add(producerAwardsDTO);
         });
         return intervalAwards;
     }

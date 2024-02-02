@@ -14,8 +14,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
-
-
 @Service
 public class ImportDataServiceImpl implements ImportDataService {
 
@@ -38,9 +36,11 @@ public class ImportDataServiceImpl implements ImportDataService {
     private static final int INDEX_AWARDS = 4;
 
     @Override
-    public void importDataH2() {
+    public void importDataH2() throws IOException {
         Resource resource = new ClassPathResource("movielist.csv");
+
         try {
+            System.out.println("- Importando dados do CSV -");
             InputStream inputStream = resource.getInputStream();
 
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
@@ -48,37 +48,45 @@ public class ImportDataServiceImpl implements ImportDataService {
                     .lines()
                     .skip(1)
                     .forEach(this::parseObject);
-
+            System.out.println("- Dados importados com sucesso -");
         }catch (IOException e) {
             throw new RuntimeException("Não foi possível encontrar o arquivo para importar os dados.");
         }
     }
 
-    private void parseObject(String csvLine){
+    @Override
+    public void parseObject(String csvLine){
         String[] fields = csvLine.split(";");
-        boolean awards = fields.length > 4 && fields[INDEX_AWARDS].equals("yes");
+        if (fields.length >= 4 ) {
 
-        Studios studiosSave = getOrCreateStudio(fields[INDEX_STUDIO]);
+            boolean awards = fields.length > 4 && fields[INDEX_AWARDS].equals("yes");
 
-        Producer producerSave = getOrCreateProducer(fields[INDEX_PRODUCER]);
+            Studios studiosSave = getOrCreateStudio(fields[INDEX_STUDIO]);
 
-        Movies movieSave = createMovie(new Movies(Integer.parseInt(fields[INDEX_YEAR]),fields[INDEX_FILM_NAME],awards, producerSave,studiosSave));
+            Producer producerSave = getOrCreateProducer(fields[INDEX_PRODUCER]);
 
-        if (awards)
-            awardsRepository.save(new Awards(movieSave,studiosSave,producerSave,Integer.parseInt(fields[INDEX_YEAR])));
+            Movies movieSave = createMovie(new Movies(Integer.parseInt(fields[INDEX_YEAR]),fields[INDEX_FILM_NAME],awards, producerSave,studiosSave));
+
+            if (awards)
+                awardsRepository.save(new Awards(movieSave,studiosSave,producerSave,Integer.parseInt(fields[INDEX_YEAR])));
+
+        }else {
+            System.out.println("Dados incompletos ou incorretos, ignorando esta linha: " + csvLine);
+        }
     }
 
-    private Studios getOrCreateStudio(String studioName) {
+    @Override
+    public Studios getOrCreateStudio(String studioName) {
         Studios studios = studioRepository.findByStudioName(studioName);
         return (studios != null) ? studios : studioRepository.save(new Studios(studioName));
     }
-
-    private Producer getOrCreateProducer(String producerName) {
+    @Override
+    public Producer getOrCreateProducer(String producerName) {
         Producer producer = producerRepository.findByProducerName(producerName);
         return (producer != null) ? producer : producerRepository.save(new Producer(producerName));
     }
 
-    private Movies createMovie(Movies movies) {
+    public Movies createMovie(Movies movies) {
 
         return moviesRepository.save(movies);
     }

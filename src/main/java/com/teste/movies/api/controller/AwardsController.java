@@ -1,4 +1,4 @@
-package com.teste.movies.controller;
+package com.teste.movies.api.controller;
 
 import com.teste.movies.domain.dto.AwardsWinDTO;
 import com.teste.movies.services.ProducerAwardsService;
