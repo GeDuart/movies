@@ -14,6 +14,10 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 @Service
 public class ImportDataServiceImpl implements ImportDataService {
 
@@ -63,12 +67,15 @@ public class ImportDataServiceImpl implements ImportDataService {
 
             Studios studiosSave = getOrCreateStudio(fields[INDEX_STUDIO]);
 
-            Producer producerSave = getOrCreateProducer(fields[INDEX_PRODUCER]);
+            List<Producer> producerSave = getOrCreateProducer(fields[INDEX_PRODUCER]);
 
-            Movies movieSave = createMovie(new Movies(Integer.parseInt(fields[INDEX_YEAR]),fields[INDEX_FILM_NAME],awards, producerSave,studiosSave));
+            Movies movieSave = createMovie(new Movies(Integer.parseInt(fields[INDEX_YEAR]),fields[INDEX_FILM_NAME],awards,studiosSave));
 
             if (awards)
-                awardsRepository.save(new Awards(movieSave,studiosSave,producerSave,Integer.parseInt(fields[INDEX_YEAR])));
+                producerSave.forEach(producer ->
+                    awardsRepository.save(new Awards(movieSave,studiosSave,producer,Integer.parseInt(fields[INDEX_YEAR])))
+                );
+
 
         }else {
             System.out.println("Dados incompletos ou incorretos, ignorando esta linha: " + csvLine);
@@ -81,9 +88,16 @@ public class ImportDataServiceImpl implements ImportDataService {
         return (studios != null) ? studios : studioRepository.save(new Studios(studioName));
     }
     @Override
-    public Producer getOrCreateProducer(String producerName) {
-        Producer producer = producerRepository.findByProducerName(producerName);
-        return (producer != null) ? producer : producerRepository.save(new Producer(producerName));
+    public List<Producer> getOrCreateProducer(String producerName) {
+        String[] fields = producerName.split(",|and");
+        List<Producer> producers = new ArrayList<Producer>();
+
+        for (String field : fields) {
+            Producer producer = producerRepository.findByProducerName(field.trim());
+            producer = (producer != null) ? producer : producerRepository.save(new Producer(field.trim()));
+            producers.add(producer);
+        }
+        return producers;
     }
 
     public Movies createMovie(Movies movies) {

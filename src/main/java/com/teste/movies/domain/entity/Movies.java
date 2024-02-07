@@ -24,16 +24,12 @@ public class Movies {
     private boolean awards;
 
     @ManyToOne
-    private Producer producer;
-
-    @ManyToOne
     private Studios studios;
 
-    public Movies(Integer year, String title, Boolean awards, Producer producer, Studios studios) {
+    public Movies(Integer year, String title, Boolean awards, Studios studios) {
         this.year = year;
         this.title = title;
         this.awards = awards;
-        this.producer = producer;
         this.studios = studios;
     }
 

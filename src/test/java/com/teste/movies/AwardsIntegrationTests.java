@@ -31,7 +31,7 @@ class AwardsIntegrationTests {
 
 		AwardsWinDTO awardsWinDTO = producerAwardsService.getFasterAwardsAndMaxInterval();
 
-		assertThat(awardsWinDTO.getMax().get(0).getProducer().equals("Bo Derek")).isTrue();
+		assertThat(awardsWinDTO.getMax().get(0).getProducer().equals("Matthew Vaughn")).isTrue();
 	}
 
 	@Test
