@@ -89,13 +89,15 @@ public class ImportDataServiceImpl implements ImportDataService {
     }
     @Override
     public List<Producer> getOrCreateProducer(String producerName) {
-        String[] fields = producerName.split(",|and");
+        String[] fields = producerName.split(",|\\s+and");
         List<Producer> producers = new ArrayList<Producer>();
 
         for (String field : fields) {
-            Producer producer = producerRepository.findByProducerName(field.trim());
-            producer = (producer != null) ? producer : producerRepository.save(new Producer(field.trim()));
-            producers.add(producer);
+            if (!field.isEmpty()) {
+                Producer producer = producerRepository.findByProducerName(field.trim());
+                producer = (producer != null) ? producer : producerRepository.save(new Producer(field.trim()));
+                producers.add(producer);
+                }
         }
         return producers;
     }
